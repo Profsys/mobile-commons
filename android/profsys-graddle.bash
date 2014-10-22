@@ -14,7 +14,7 @@ configure() {
   APK_RELEASE_DIR=$RELEASE_DIR/$APK_NAME
   APK_DEBUG_DST=$APK_DEBUG_DIR/$APK_NAME.apk
   APK_RELEASE_DST=$APK_RELEASE_DIR/$APP_NAME.apk
-  KEYPATH=$HOME/Documents/profsys/$APP_NAME.signing.keystore
+  KEYPATH=$HOME/Documents/profsys/IKK.signing.keystore
   ALIAS=profsys
 
   if [ ! -d "./app" ]; then
@@ -30,11 +30,17 @@ configure() {
   fi
 }
 
-configure
-
+pre_install() {
+  if [ ! -f $APK_DEBUG_DST ]; then
+    echo Could not find $APK_DEBUG_DST.
+    echo Running build.
+    clean
+    build
+  fi
+}
 
 install_apk() {
-  $ADB_PATH install -r $APK_DST
+  $ADB_PATH install $APK_DEBUG_DST
 }
 
 build() {
@@ -58,20 +64,42 @@ print_usage() {
   echo "build or release"
 }
 
-if [[ "$1" == "" ]]
-then
-  print_usage
-  exit 
-fi
+clean() {
+  ./gradlew clean
+}
 
-./gradlew clean
+main() {
 
-if [[ "$1" == "build" ]]
-then
-  build
-elif [[ "$1" == "release" ]]
-then
-  release
-else
-  echo Nothing todo for $1
-fi
+  if [[ "$1" == "" ]]
+  then
+    print_usage
+    exit
+  fi
+
+  configure
+
+  if [[ "$1" == "install" ]]
+  then
+    pre_install
+    install_apk
+    exit
+  elif [[ "$1" == "clean" ]]
+  then
+    clean
+    exit
+  fi
+
+  clean
+
+  if [[ "$1" == "build" ]]
+  then
+    build
+  elif [[ "$1" == "release" ]]
+  then
+    release
+  else
+    echo Nothing todo for $1
+  fi
+}
+
+main $1
