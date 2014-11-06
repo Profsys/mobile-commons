@@ -4,9 +4,11 @@ configure() {
   ADB_PATH=adb
   GIT_CMD=`git describe --tags --dirty`
   APP_NAME=$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')
-  APK_DEBUG_SRC=app/build/outputs/apk/app-debug-unaligned.apk
-  APK_RELEASE_SRC=app/build/outputs/apk/app-release-unsigned.apk
-  BUILDS_DIR=$HOME/builds
+  OUTPUT_DIR=app/build/outputs
+  LINT_RESULTS=$OUTPUT_DIR/*.html
+  APK_DEBUG_SRC=$OUTPUT_DIR/apk/app-debug-unaligned.apk
+  APK_RELEASE_SRC=$OUTPUT_DIR/apk/app-release-unsigned.apk
+  BUILDS_DIR=$HOME/Dropbox/builds
   DEBUG_DIR=$BUILDS_DIR/debug
   RELEASE_DIR=$BUILDS_DIR/release
   APK_NAME=$APP_NAME-"$GIT_CMD"
@@ -48,15 +50,21 @@ build() {
 
   mkdir -p $APK_DEBUG_DIR
   zipalign -f 4 $APK_DEBUG_SRC $APK_DEBUG_DST
+  zip $APK_DEBUG_DST.zip $APK_DEBUG_DST
+}
+
+lint() {
+  ./gradlew build connectedCheck
+  cp $LINT_RESULTS $APK_DEBUG_DIR
 }
 
 release() {
   ./gradlew assembleRelease
   mkdir -p $APK_RELEASE_DIR
 
-  cp $APK_RELEASE_SRC $APK_RELEASE_DST
-
-  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_RELEASE_DST $ALIAS
+  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_RELEASE_SRC $ALIAS
+  zipalign -f 4 $APK_RELEASE_SRC $APK_RELEASE_DST
+  zip $APK_RELEASE_DST.zip $APK_RELEASE_DST
 }
 
 print_usage() {
@@ -94,9 +102,13 @@ main() {
   if [[ "$1" == "build" ]]
   then
     build
+    rm $APK_DEBUG_DST
   elif [[ "$1" == "release" ]]
   then
     release
+  elif [[ "$1" == "lint" ]]
+  then
+    lint
   else
     echo Nothing todo for $1
   fi
