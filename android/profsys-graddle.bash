@@ -16,7 +16,7 @@ configure() {
   APK_RELEASE_DIR=$RELEASE_DIR/$APK_NAME
   APK_DEBUG_DST=$APK_DEBUG_DIR/$APK_NAME.apk
   APK_RELEASE_DST=$APK_RELEASE_DIR/$APP_NAME.apk
-  KEYPATH=$HOME/Documents/profsys/IKK.signing.keystore
+  KEYPATH=$HOME/Documents/profsys/$APP_NAME.signing.keystore
   ALIAS=profsys
 
   if [ ! -d "./app" ]; then
