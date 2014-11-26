@@ -102,7 +102,6 @@ main() {
   if [[ "$1" == "build" ]]
   then
     build
-    rm $APK_DEBUG_DST
   elif [[ "$1" == "release" ]]
   then
     release
