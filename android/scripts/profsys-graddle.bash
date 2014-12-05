@@ -7,15 +7,16 @@ configure() {
   OUTPUT_DIR=app/build/outputs
   LINT_RESULTS=$OUTPUT_DIR/*.html
   APK_DEBUG_SRC=$OUTPUT_DIR/apk/app-debug-unaligned.apk
-  APK_RELEASE_SRC=$OUTPUT_DIR/apk/app-release-unsigned.apk
+  APK_STAGING_SRC=$OUTPUT_DIR/apk/app-staging-debug-unaligned.apk
+  APK_PRODUCTION_SRC=$OUTPUT_DIR/apk/app-production-release-unsigned.apk
   BUILDS_DIR=$HOME/Dropbox/builds
   DEBUG_DIR=$BUILDS_DIR/debug
-  RELEASE_DIR=$BUILDS_DIR/release
+  PRODUCTION_DIR=$BUILDS_DIR/production
   APK_NAME=$APP_NAME-"$GIT_CMD"
   APK_DEBUG_DIR=$DEBUG_DIR/$APK_NAME
-  APK_RELEASE_DIR=$RELEASE_DIR/$APK_NAME
+  APK_PRODUCTION_DIR=$PRODUCTION_DIR/$APK_NAME
   APK_DEBUG_DST=$APK_DEBUG_DIR/$APK_NAME.apk
-  APK_RELEASE_DST=$APK_RELEASE_DIR/$APP_NAME.apk
+  APK_PRODUCTION_DST=$APK_PRODUCTION_DIR/$APP_NAME.apk
   KEYPATH=$HOME/Documents/profsys/$APP_NAME.signing.keystore
   ALIAS=profsys
 
@@ -58,18 +59,18 @@ lint() {
   cp $LINT_RESULTS $APK_DEBUG_DIR
 }
 
-release() {
+production() {
   ./gradlew assembleRelease
-  mkdir -p $APK_RELEASE_DIR
+  mkdir -p $APK_PRODUCTION_DIR
 
-  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_RELEASE_SRC $ALIAS
-  zipalign -f 4 $APK_RELEASE_SRC $APK_RELEASE_DST
-  zip $APK_RELEASE_DST.zip $APK_RELEASE_DST
+  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_PRODUCTION_SRC $ALIAS
+  zipalign -f 4 $APK_PRODUCTION_SRC $APK_PRODUCTION_DST
+  zip $APK_PRODUCTION_DST.zip $APK_PRODUCTION_DST
 }
 
 print_usage() {
   echo "Please add an argument!"
-  echo "build or release"
+  echo "build or production"
 }
 
 clean() {
@@ -102,9 +103,9 @@ main() {
   if [[ "$1" == "build" ]]
   then
     build
-  elif [[ "$1" == "release" ]]
+  elif [[ "$1" == "prod" ]]
   then
-    release
+    production
   elif [[ "$1" == "lint" ]]
   then
     lint
