@@ -2,12 +2,10 @@
 
 configure() {
   ADB_PATH=adb
-  GIT_CMD=`git describe --tags --dirty`
   APP_NAME=$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')
   OUTPUT_DIR=app/build/outputs
   LINT_RESULTS=$OUTPUT_DIR/*.html
-  APK_DEBUG_SRC=$OUTPUT_DIR/apk/app-debug-unaligned.apk
-  APK_STAGING_SRC=$OUTPUT_DIR/apk/app-staging-debug-unaligned.apk
+  APK_DEBUG_SRC=$OUTPUT_DIR/apk/app-staging-debug-unaligned.apk
   APK_PRODUCTION_SRC=$OUTPUT_DIR/apk/app-production-release-unsigned.apk
   BUILDS_DIR=$HOME/Dropbox/builds
   DEBUG_DIR=$BUILDS_DIR/debug
@@ -28,7 +26,7 @@ configure() {
 
   if [[ $GIT_CMD == *dirty* ]]
   then
-    echo "error: build or release not allowed with dirty changes!";
+    echo "error: staging or release not allowed with dirty changes!";
     exit
   fi
 }
@@ -36,9 +34,9 @@ configure() {
 pre_install() {
   if [ ! -f $APK_DEBUG_DST ]; then
     echo Could not find $APK_DEBUG_DST.
-    echo Running build.
+    echo Running staging.
     clean
-    build
+    staging
   fi
 }
 
@@ -46,8 +44,8 @@ install_apk() {
   $ADB_PATH install $APK_DEBUG_DST
 }
 
-build() {
-  ./gradlew assemble
+staging() {
+  ./gradlew assembleStaging
 
   mkdir -p $APK_DEBUG_DIR
   zipalign -f 4 $APK_DEBUG_SRC $APK_DEBUG_DST
@@ -70,7 +68,7 @@ production() {
 
 print_usage() {
   echo "Please add an argument!"
-  echo "build or production"
+  echo "staging or production"
 }
 
 clean() {
@@ -82,6 +80,13 @@ main() {
   if [[ "$1" == "" ]]
   then
     print_usage
+    exit
+  fi
+
+  GIT_CMD=`git describe --tags --dirty`
+  if [[ -z $GIT_CMD ]]
+  then
+    echo "Aborting"
     exit
   fi
 
@@ -100,9 +105,9 @@ main() {
 
   clean
 
-  if [[ "$1" == "build" ]]
+  if [[ "$1" == "staging" ]]
   then
-    build
+    staging
   elif [[ "$1" == "prod" ]]
   then
     production
