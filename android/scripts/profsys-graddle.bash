@@ -40,7 +40,7 @@ pre_install() {
 }
 
 install_apk() {
-  $ADB_PATH install $APK_DEBUG_DST
+  $ADB_PATH install -r $APK_DEBUG_DST
 }
 
 staging() {
