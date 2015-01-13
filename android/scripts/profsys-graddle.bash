@@ -35,7 +35,6 @@ pre_install() {
   if [ ! -f $APK_DEBUG_DST ]; then
     echo Could not find $APK_DEBUG_DST.
     echo Running staging.
-    clean
     staging
   fi
 }
