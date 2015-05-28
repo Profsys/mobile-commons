@@ -1,4 +1,4 @@
 mobile-commons
 ==============
 
-This repository will contain reusable code for our mobile endeavors.
+just stuff to make it easier to be a mobile developer.
