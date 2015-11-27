@@ -1,0 +1,33 @@
+adb ?= $(HOME)/Library/Android/sdk/platform-tools/adb
+emulator ?= $(HOME)/Library/Android/sdk/tools/emulator
+emulatorName ?= Nexus_S_API_17
+package=com.profsys.app
+
+.PHONY : build test
+
+test:
+	./gradlew connectedAndroidTest
+build:
+	 ./gradlew assemble
+clean:
+	rm -rvf .gradle/
+	rm -rvf app/build/
+	rm -rvf build/
+
+install: build
+	$(adb) install -r app/build/outputs/apk/app-production-debug.apk
+kill:
+	$(adb) shell am force-stop $(package)
+
+run: install
+	$(adb) shell am start -n "$(package)/$(package).activity.StartupActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+emulate:
+	$(emulator) "@$(emulatorName)"
+
+open-lint: clean build
+	links app/build/outputs/lint-results.html
+
+asm:
+	./gradlew assemble
+release:
+	profsys-graddle.bash prod
