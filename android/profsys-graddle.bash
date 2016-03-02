@@ -63,6 +63,12 @@ production() {
   jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_PRODUCTION_SRC $ALIAS
   zipalign -f 4 $APK_PRODUCTION_SRC $APK_PRODUCTION_DST
   zip -j $APK_PRODUCTION_DST.zip $APK_PRODUCTION_DST
+  if [ ! -d "./html/" ]; then
+    return
+  fi
+  echo Found documentation
+  cp html/* $APK_PRODUCTION_DIR/
+  echo copied to $APK_PRODUCTION_DIR
 }
 
 print_usage() {
