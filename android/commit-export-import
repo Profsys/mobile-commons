@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+prefix="$1"
+desc="$2"
+
+[[ -z "$prefix" ]] && { echo "Parameter prefix is empty" ; exit 1; }
+[[ -z "$desc" ]] && { echo "Parameter desc is empty" ; exit 1; }
+
+git add app/
+git commit -m "$prefix: exported $desc to libp"
+cd libp; git add .;
+git commit -m "$prefix: imported $desc"
+cd -
+scripts/update-libp

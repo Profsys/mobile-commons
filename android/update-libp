@@ -1,0 +1,8 @@
+#!/bin/sh
+
+project=$1
+cd $project
+change_summary=`git show -s --pretty='tformat: %h (%s, %ad)' --date=short`
+cd -
+git add $project
+git commit -m "$project: $change_summary" $project
