@@ -47,8 +47,8 @@ staging() {
   ./gradlew assembleStaging
 
   mkdir -p $APK_DEBUG_DIR
-  zipalign -f 4 $APK_DEBUG_SRC $APK_DEBUG_DST
-  zip -j $APK_DEBUG_DST.zip $APK_DEBUG_DST
+  zipalign -f 4 "$APK_DEBUG_SRC" "$APK_DEBUG_DST"
+  zip -j "$APK_DEBUG_DST.zip" "$APK_DEBUG_DST"
 }
 
 lint() {
@@ -60,9 +60,9 @@ production() {
   ./gradlew assembleRelease
   mkdir -p $APK_PRODUCTION_DIR
 
-  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore $KEYPATH $APK_PRODUCTION_SRC $ALIAS
-  zipalign -f 4 $APK_PRODUCTION_SRC $APK_PRODUCTION_DST
-  zip -j $APK_PRODUCTION_DST.zip $APK_PRODUCTION_DST
+  jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "$KEYPATH" "$APK_PRODUCTION_SRC" $ALIAS
+  zipalign -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
+  zip -j "$APK_PRODUCTION_DST.zip" "$APK_PRODUCTION_DST"
   if [ ! -d "./html/" ]; then
     return
   fi
