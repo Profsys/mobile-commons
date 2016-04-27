@@ -32,7 +32,7 @@ configure() {
 }
 
 pre_install() {
-  if [ ! -f $APK_DEBUG_DST ]; then
+  if [ ! -f "$APK_DEBUG_DST" ]; then
     echo Could not find $APK_DEBUG_DST.
     echo Running staging.
     staging
@@ -48,7 +48,6 @@ staging() {
 
   mkdir -p $APK_DEBUG_DIR
   zipalign -f 4 "$APK_DEBUG_SRC" "$APK_DEBUG_DST"
-  zip -j "$APK_DEBUG_DST.zip" "$APK_DEBUG_DST"
 }
 
 lint() {
@@ -58,17 +57,16 @@ lint() {
 
 production() {
   ./gradlew assembleRelease
-  mkdir -p $APK_PRODUCTION_DIR
+  mkdir -p "$APK_PRODUCTION_DIR"
 
   jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "$KEYPATH" "$APK_PRODUCTION_SRC" $ALIAS
   zipalign -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
-  zip -j "$APK_PRODUCTION_DST.zip" "$APK_PRODUCTION_DST"
   if [ ! -d "./html/" ]; then
     return
   fi
   echo Found documentation
-  cp html/* $APK_PRODUCTION_DIR/
-  echo copied to $APK_PRODUCTION_DIR
+  cp html/* "$APK_PRODUCTION_DIR/"
+  echo copied to "$APK_PRODUCTION_DIR"
 }
 
 print_usage() {
