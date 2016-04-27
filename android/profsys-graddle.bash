@@ -2,7 +2,7 @@
 
 configure() {
   ADB_PATH=adb
-  APP_NAME=$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')
+  APP_NAME="$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')"
   OUTPUT_DIR=app/build/outputs
   LINT_RESULTS=$OUTPUT_DIR/*.html
   APK_DEBUG_SRC=$OUTPUT_DIR/apk/app-staging-debug-unaligned.apk
@@ -10,12 +10,12 @@ configure() {
   BUILDS_DIR=$HOME/Dropbox/builds
   DEBUG_DIR=$BUILDS_DIR/debug
   PRODUCTION_DIR=$BUILDS_DIR/production
-  APK_NAME=$APP_NAME-"$GIT_CMD"
-  APK_DEBUG_DIR=$DEBUG_DIR/$APK_NAME
-  APK_PRODUCTION_DIR=$PRODUCTION_DIR/$APK_NAME
+  APK_NAME="$APP_NAME"-"$GIT_CMD"
+  APK_DEBUG_DIR="$DEBUG_DIR/$APK_NAME"
+  APK_PRODUCTION_DIR="$PRODUCTION_DIR/$APK_NAME"
   APK_DEBUG_DST=$APK_DEBUG_DIR/$APK_NAME.apk
-  APK_PRODUCTION_DST=$APK_PRODUCTION_DIR/$APP_NAME.apk
-  KEYPATH=$HOME/Documents/profsys/$APP_NAME.signing.keystore
+  APK_PRODUCTION_DST=$APK_PRODUCTION_DIR/"$APP_NAME".apk
+  KEYPATH=$HOME/Documents/profsys/"$APP_NAME".signing.keystore
   ALIAS=profsys
 
   if [ ! -d "./app" ]; then
