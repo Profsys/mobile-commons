@@ -31,3 +31,7 @@ asm:
 	./gradlew assemble
 release:
 	profsys-graddle.bash prod
+push:
+	echo "Pushing tags and branches"
+	git push origin --all
+	git push origin --tags
