@@ -62,6 +62,13 @@ production() {
   jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "$KEYPATH" "$APK_PRODUCTION_SRC" $ALIAS
   zipalign -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
   echo copied to "$APK_PRODUCTION_DIR"
+  unamestr=`uname`
+  if [[ "$unamestr" == 'Linux' ]]; then
+    xdg-open "$APK_PRODUCTION_DIR"
+  elif [[ "$unamestr" == 'Darwin' ]]; then
+    open "$APK_PRODUCTION_DIR"
+  fi
+
   if [ ! -d "./html/" ]; then
     return
   fi
