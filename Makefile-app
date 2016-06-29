@@ -2,6 +2,7 @@ adb ?= $(HOME)/Library/Android/sdk/platform-tools/adb
 emulator ?= $(HOME)/Library/Android/sdk/tools/emulator
 emulatorName ?= Nexus_S_API_17
 package=com.profsys.app
+lastTag=MAJOR.MIN.PATCH
 
 .PHONY : build test
 
@@ -31,7 +32,16 @@ asm:
 	./gradlew assemble
 release:
 	profsys-graddle.bash prod
+
+update-libp:
+	$HOME/src/github.com/profsys/mobile-commons/android/update-libp libp
+emailpatches:
+	git format-patch --cover-letter -M ${lastTag}..HEAD -o outgoing/
+	vim outgoing/0000-*
+	git send-email outgoing/*
 push:
+	echo "Pushing libp"
+	git -C libp/ push
 	echo "Pushing tags and branches"
 	git push origin --all
 	git push origin --tags
