@@ -59,6 +59,9 @@ production() {
   ./gradlew assembleRelease
   mkdir -p "$APK_PRODUCTION_DIR"
 
+  done_file=/tmp/done.html
+  echo "<h1>Need to sign</h1>" > $done_file
+  open $done_file
   jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "$KEYPATH" "$APK_PRODUCTION_SRC" $ALIAS
   zipalign -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
   echo copied to "$APK_PRODUCTION_DIR"
