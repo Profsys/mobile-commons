@@ -1,8 +1,44 @@
 #!/bin/sh
 
-project=$1
-cd $project
-change_summary=`git show -s --pretty='tformat: %h (%s, %ad)' --date=short`
-cd -
-git add $project
-git commit -m "$project: $change_summary" $project
+command=$1
+project=$2
+
+function usage() {
+  echo "USAGE: <cmd> <project>"
+  echo ""
+  echo "Suported commands:"
+  echo "module_update - commit changed submodule"
+  echo "batch_pull - refresh submodule in all projects"
+}
+
+function module_update() {
+  cd $project
+  change_summary=`git show -s --pretty='tformat: %h (%s, %ad)' --date=short`
+  cd -
+  git add $project
+  git commit -m "$project: $change_summary" $project
+}
+
+function batch_pull() {
+  for p in profsys-*/$project
+  do 
+    echo $p
+    cd $p
+    git pull
+    git push origin --all
+    git push origin --tags
+    cd -
+  done
+}
+
+function main() {
+  if [[ "$command" == 'module_update' ]]; then 
+    module_update
+  elif [[ "$command" == 'batch_refresh' ]]; then 
+    batch_pull
+  else
+    usage
+  fi
+}
+
+main
