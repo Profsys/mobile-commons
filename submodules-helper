@@ -8,7 +8,7 @@ function usage() {
   echo ""
   echo "Suported commands:"
   echo "module_update - commit changed submodule"
-  echo "batch_pull - refresh submodule in all projects"
+  echo "batch_refresh - refresh submodule in all projects"
 }
 
 function module_update() {
@@ -19,11 +19,11 @@ function module_update() {
   git commit -m "$project: $change_summary" $project
 }
 
-function batch_pull() {
+function batch_refresh() {
   for p in profsys-*/$project
   do 
     echo $p
-    cd $p
+    cd $p/$project
     git pull
     git push origin --all
     git push origin --tags
@@ -35,7 +35,7 @@ function main() {
   if [[ "$command" == 'module_update' ]]; then 
     module_update
   elif [[ "$command" == 'batch_refresh' ]]; then 
-    batch_pull
+    batch_refresh
   else
     usage
   fi
