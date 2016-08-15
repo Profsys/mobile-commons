@@ -1,0 +1,9 @@
+#!/bin/bash
+
+GOOGLE_PLAY_PUBLISH_URL='https://play.google.com/apps/publish'
+unamestr=`uname`
+if [[ "$unamestr" == 'Darwin' ]]; then
+  open $GOOGLE_PLAY_PUBLISH_URL
+else
+  xdg-open $GOOGLE_PLAY_PUBLISH_URL
+fi
