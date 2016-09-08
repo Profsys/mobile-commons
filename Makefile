@@ -1,4 +1,4 @@
-FILES=Logcat.py profsys-graddle.bash
+FILES=scripts/profsys-graddle.bash
 INSTALL_DIR=/usr/local/bin
 
 install:
