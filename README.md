@@ -1,3 +1,3 @@
 # mobile-commons
 
-just stuff to make it easier to be a mobile developer.
+Just some utilities to ease tedious tasks mostly related to Android.
