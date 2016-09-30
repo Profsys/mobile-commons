@@ -1,7 +1,7 @@
 #!/bin/bash
 
 configure() {
-  ADB_PATH=adb
+  ADB_PATH=`find ~/Android/ -name adb`
   APP_NAME="$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')"
   OUTPUT_DIR=app/build/outputs
   LINT_RESULTS=$OUTPUT_DIR/*.html
@@ -17,6 +17,7 @@ configure() {
   APK_PRODUCTION_DST=$APK_PRODUCTION_DIR/"$APP_NAME".apk
   KEYPATH=$HOME/Documents/profsys/"$APP_NAME".signing.keystore
   ALIAS=profsys
+  ZIP_ALIGN_PATH=`find ~/Android/ -name zipalign|tail -n1`
 
   if [ ! -d "./app" ]; then
     echo Could not find app directory in `pwd`.
@@ -47,7 +48,7 @@ staging() {
   ./gradlew assembleStaging
 
   mkdir -p $APK_DEBUG_DIR
-  zipalign -f 4 "$APK_DEBUG_SRC" "$APK_DEBUG_DST"
+  $ZIP_ALIGN_PATH -f 4 "$APK_DEBUG_SRC" "$APK_DEBUG_DST"
 }
 
 lint() {
@@ -63,7 +64,7 @@ production() {
   echo "<h1>Need to sign</h1>" > $done_file
   open $done_file
   jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "$KEYPATH" "$APK_PRODUCTION_SRC" $ALIAS
-  zipalign -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
+  $ZIP_ALIGN_PATH -f 4 "$APK_PRODUCTION_SRC" "$APK_PRODUCTION_DST"
   echo copied to "$APK_PRODUCTION_DIR"
   unamestr=`uname`
   if [[ "$unamestr" == 'Linux' ]]; then
