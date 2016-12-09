@@ -1,0 +1,9 @@
+for i in $(seq 1 50)
+do
+   convert -size 1028x1028 xc:white $i.jpg
+   convert -background white -size 514x514 \
+     -gravity Center \
+     -weight 700 \
+     caption:"$i. Ja, dette er nummer $i" \
+     $i.jpg
+done
