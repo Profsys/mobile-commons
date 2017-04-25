@@ -1,7 +1,10 @@
 #!/bin/bash
 
 configure() {
-  ADB_PATH=`find ~/Android/ -name adb`
+  if [[ "$ADB_PATH" == "" ]]; then
+    echo "Searching for adb"
+    ADB_PATH=`find / -name adb`
+  fi
   APP_NAME="$(cat app/src/main/res/values/strings.xml | grep app_name | perl -lne 'if(/>[^<]*</){$_=~m/>([^<]*)</;push(@a,$1)}if(eof){foreach(@a){print $_}}')"
   OUTPUT_DIR=app/build/outputs
   LINT_RESULTS=$OUTPUT_DIR/*.html
@@ -15,9 +18,15 @@ configure() {
   APK_PRODUCTION_DIR="$PRODUCTION_DIR/$APK_NAME"
   APK_DEBUG_DST=$APK_DEBUG_DIR/$APK_NAME.apk
   APK_PRODUCTION_DST=$APK_PRODUCTION_DIR/"$APP_NAME".apk
-  KEYPATH=$HOME/Documents/profsys/"$APP_NAME".signing.keystore
+  if [[ "$KEYPATH" == "" ]]; then
+    echo "Searching for keypath"
+    KEYPATH=$HOME/Documents/profsys/"$APP_NAME".signing.keystore
+  fi
   ALIAS=profsys
-  ZIP_ALIGN_PATH=`find ~/Android/ -name zipalign|tail -n1`
+  if [[ "$ZIP_ALIGN_PATH" == "" ]]; then
+    echo "Searching for zipalign"
+    ZIP_ALIGN_PATH=`find / -name zipalign|tail -n1`
+  fi
 
   if [ ! -d "./app" ]; then
     echo Could not find app directory in `pwd`.
