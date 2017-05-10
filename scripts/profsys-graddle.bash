@@ -39,6 +39,12 @@ configure() {
     echo "error: staging or release not allowed with dirty changes!";
     exit
   fi
+
+  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  if $DIR/easytracker-check.sh | grep MISSING; then
+    echo "error: some activities do not have google analytics properly enabled!";
+    exit
+  fi
 }
 
 pre_install() {
