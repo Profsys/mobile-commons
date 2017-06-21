@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 for activity in app/src/main/java/com/profsys/*/activity/*.java
 do
